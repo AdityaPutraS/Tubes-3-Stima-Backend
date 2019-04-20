@@ -1,0 +1,7 @@
+flask
+gunicorn==19.9.0
+flask_sqlalchemy
+flask_migrate
+flask_wtf
+psycopg2
+flask-cors
