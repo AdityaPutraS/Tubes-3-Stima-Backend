@@ -13,9 +13,5 @@ def test():
 @app.route('/query/<pertanyaan>', methods=['GET','POST'])
 def query(pertanyaan):
 	jawaban = getJawaban(pertanyaan)
-	#Buat dict nya
-	hasil = {}
-	for j in jawaban:
-		hasil[j[1]] = j[0]
-	return jsonify(hasil), 200
+	return jsonify({'respon' : jawaban}), 200
 	

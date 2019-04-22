@@ -153,17 +153,20 @@ def getSinonim(kata):
 def getJawaban(pertanyaan):
     pertanyaan = pertanyaan.lower().strip()
     pertanyaan = hapusStopWord(pertanyaan)
+    if(len(pertanyaan) == 0):
+        return []
     mirip = []
     for idx, s in enumerate(soal):
         s = s.lower().strip()
         s = hapusStopWord(s)
-        h = hitungCocok(s, pertanyaan)
-        if(h >= 0.5):
-            mirip.append([h, jawaban[idx]])
-        if(h == 1):
-            break
-    mirip.sort(key = lambda x : x[0], reverse=True)
+        if(len(s) != 0):
+            h = hitungCocok(s, pertanyaan)
+            if(h >= 0.5):
+                mirip.append({'jawaban':jawaban[idx], 'kemiripan' : h})
+            if(h == 1):
+                break
+    mirip.sort(key = lambda x : x['kemiripan'], reverse=True)
     if(len(mirip) > 0):
-        if(mirip[0][0] == 1):
+        if(mirip[0]['kemiripan'] == 1):
             return mirip[:1]
     return mirip[:3]
