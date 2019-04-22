@@ -11,8 +11,6 @@ sinonim = buka('app/static/sinonim')
 soal = buka('app/static/soal')
 jawaban = buka('app/static/jawaban')
 
-soal = soal[len(soal)//2:]
-jawaban = jawaban[len(jawaban)//2:]
 
 #Menghitung border function dari string s
 def computeFail(s):
@@ -78,23 +76,29 @@ def bmITB(text, pattern):
     n, m = len(text), len(pattern)
     i = m-1
     if(i > n-1):
-        return [-1,0]
+        return bmITB(pattern, text)
     j = m-1
     maxLen = 0
-    while(i <= n-1):
+    go = True
+    temp = 0
+    while(go):
         if(pattern[j] == text[i]):
+            temp += 1
             if(j == 0):
-                return [i, n-j]
+                return [i, m]
             else:
                 i -= 1
                 j -= 1
         else:
-            if(maxLen < n-j):
-                maxLen = n-j
+            if(maxLen < temp):
+                maxLen = temp
+            temp = 0
             lo = last[ord(text[i])]
-            i = i + m - min(j, 1+lo)
+            i = i + m - min(j, lo+1)
             j = m-1
-    return [-1, n-maxLen]
+        if(i > n-1):
+            go = False
+    return [-1, maxLen]
 
 def hapusStopWord(s):
     tempKata = s.split(' ')
@@ -122,8 +126,8 @@ def hitungCocok(text, pattern):
                         hasKMP = kmpITB(s, tS)
                         hasBM = bmITB(s, tS)
                         has = hasKMP
-#                         if(hasKMP[1] > hasBM[1]):
-#                             has = hasKMP
+                        if(hasKMP[1] > hasBM[1]):
+                            has = hasKMP
                         if(maxCocok < has[1]):
                             maxCocok = has[1]
                         if(has[0] > -1):
@@ -138,18 +142,20 @@ def getSinonim(kata):
     if(kata in sinonim):
         if('sinonim' in sinonim[kata]):
             hasil = hasil.union(set(sinonim[kata]['sinonim']))
-#     for s in sinonim:
-#         if(kata in sinonim[s]['sinonim']):
-#             hasil = hasil.union(set([s]))
-#     for h in hasil:
-#         if(kmpITB(kata, h) == -1 and kmpITB(h, kata) == -1):
-#             hasil.union(getSinonim(h))
+    for s in sinonim:
+        if(kata in sinonim[s]['sinonim']):
+            hasil = hasil.union(set([s]))
+    for h in hasil:
+        if(kmpITB(kata, h) == -1 and kmpITB(h, kata) == -1):
+            hasil.union(getSinonim(h))
     return hasil
 
 def getJawaban(pertanyaan):
+    pertanyaan = pertanyaan.lower().strip()
     pertanyaan = hapusStopWord(pertanyaan)
     mirip = []
     for idx, s in enumerate(soal):
+        s = s.lower().strip()
         s = hapusStopWord(s)
         h = hitungCocok(s, pertanyaan)
         if(h >= 0.5):
