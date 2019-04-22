@@ -142,9 +142,9 @@ def getSinonim(kata):
     if(kata in sinonim):
         if('sinonim' in sinonim[kata]):
             hasil = hasil.union(set(sinonim[kata]['sinonim']))
-    for s in sinonim:
-        if(kata in sinonim[s]['sinonim']):
-            hasil = hasil.union(set([s]))
+    # for s in sinonim:
+    #     if(kata in sinonim[s]['sinonim']):
+    #         hasil = hasil.union(set([s]))
     for h in hasil:
         if(kmpITB(kata, h) == -1 and kmpITB(h, kata) == -1):
             hasil.union(getSinonim(h))
